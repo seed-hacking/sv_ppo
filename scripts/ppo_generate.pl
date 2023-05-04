@@ -11,7 +11,7 @@ use constant KNOWN_BACKENDS => { 'MySQL' => 1, 'SQLite' => 1 };
 # usage message 
 sub usage {
   my $error = shift;
-  print "Usage: ppo_generate.pl -xml xml_file [-backend db_backend -database db_name] [-file sql output filename] [-host hostname] [-user username] [-password passwd] [-port port] [-socket socket] [-perl_target target_dir/]\n";
+  print "Usage: ppo_generate.pl -xml xml_file [-backend db_backend -database db_name] [-file sql output filename] [-host hostname] [-user username] [-password passwd] [-create] [-port port] [-socket socket] [-perl_target target_dir/]\n";
   print "Error: $error\n" if($error);
   exit;
 }
@@ -25,6 +25,7 @@ GetOptions (\%options,
 	    "backend=s", "database=s",
 	    "perl_target=s",
 	    "file=s",
+	    "create",
 	    "user=s", "password=s",
 	    "host=s", "port=s", "socket=s",
 	   ); 
@@ -65,7 +66,7 @@ if (ref $generator) {
 					  -port => ($options{port}) ? $options{port} : '',
 					  -user => ($options{user}) ? $options{user} : '',
 					  -password => ($options{password}) ? $options{password} : '',
-					  -create => 1,
+					  -create => ($options{create} ? 1 : 0),
 					  -socket => ($options{socket}) ? $options{socket} : '',
 					  -file => ($options{file}) ? $options{file} : undef ) };
       if ($@) {
