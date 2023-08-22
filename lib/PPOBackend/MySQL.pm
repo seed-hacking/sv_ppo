@@ -4,6 +4,7 @@ package PPOBackend::MySQL;
 
 # $Id: MySQL.pm,v 1.11 2010-03-23 13:57:51 paczian Exp $
 
+use Carp::Always;
 use strict;
 use warnings;
 
