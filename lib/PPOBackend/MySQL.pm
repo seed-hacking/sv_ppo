@@ -4,6 +4,7 @@ package PPOBackend::MySQL;
 
 # $Id: MySQL.pm,v 1.11 2010-03-23 13:57:51 paczian Exp $
 
+use Carp::Always;
 use strict;
 use warnings;
 
@@ -58,9 +59,20 @@ sub new {
   $password = (defined $password) ? $password : '';
   Trace("PPO connect string is $connect") if T(PPOBackend => 3);
   # initialize database handle.
+    my $olderr;
+
+	open($olderr, ">&", STDERR);
+	close(STDERR);
+	open(STDERR, ">", "/dev/null");
+
   my $dbh = DBI->connect($connect, $user, $password, 
 			 { RaiseError => 1, AutoCommit => 0, PrintError => 0 }) ||
 			   Confess("Database connect error.");
+    if ($olderr)
+    {
+	close(STDERR);
+	open(STDERR, ">&", $olderr);
+    }
   
   my $self = { 'dbhandle' => $dbh,
 	       'source'   => $database,

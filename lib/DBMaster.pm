@@ -6,12 +6,19 @@ package DBMaster;
 
 use strict;
 use warnings;
+use Data::Dumper;
 
 use DBI;
 
 use DBObjectCache;
 use PPOBackend;
 use Tracer;
+
+
+# Optionally bring in FIG_Config so we  check the db list.
+BEGIN { 
+   eval { require FIG_Config; };
+};
 
 1;
 
@@ -319,10 +326,18 @@ sub fetch_by_ref {
   }
   # object to be fetched requires another master
   else {
+   my $user = $self->{user};
+   my $password = $self->{password},
+   my @match = grep { $_->{db} eq $database } @FIG_Config::dbs;
+
+   if (@match) {
+       $user = $match[0]->{user};
+       $password = $match[0]->{password};
+    }
     my $master = DBMaster->new(-database => $database,
 			       -backend  => $backend_type,
-			       -user => $self->{user},
-			       -password => $self->{password},
+			       -user => $user,
+			       -password => $password,
 			       -connect_data => $backend_data );
     $fetch = $master->$class->new()->get_objects({ '_id' => $obj_id });
   }
